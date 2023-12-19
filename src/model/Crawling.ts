@@ -1,15 +1,16 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
+import MusicInterface from "../interfaces/musicInterface";
 
 class Crawling {
-    async #getMusics() {
+    async #getMusics(): Promise<MusicInterface[]> {
         try {
             const response = await axios.get("https://www.melon.com/chart/index.htm");
             const html: string = response.data;
 
             const $ = cheerio.load(html);
 
-            let ulList: object[] = [];
+            let ulList: MusicInterface[] = [];
             const bodyList = $("tr.lst50");
 
             bodyList.each((i, element) => {
@@ -21,15 +22,15 @@ class Crawling {
                 };
             });
 
-            console.log("bodyList : ", ulList);
             return ulList;
         } catch (error) {
             console.error(error);
+            return [];
         }
     }
 
-    async getMusics() {
-        await this.#getMusics();
+    async getMusics():Promise<MusicInterface[]> {
+        return await this.#getMusics();
     }
 }
 
