@@ -4,22 +4,20 @@ import * as cheerio from "cheerio";
 class Crawling {
     async #getMusics() {
         try {
-            // 1. Fetch HTML
-            const response = await axios.get("https://www.genie.co.kr/chart/top200");
-            const html: string = response.data; // Assuming the response is a string
+            const response = await axios.get("https://www.melon.com/chart/index.htm");
+            const html: string = response.data;
 
-            // 2. Use Cheerio to load the HTML
             const $ = cheerio.load(html);
 
-            // 3. Extract data
             let ulList: object[] = [];
-            const bodyList = $("tr.list");
+            const bodyList = $("tr.lst50");
 
             bodyList.each((i, element) => {
                 ulList[i] = {
                     rank: i + 1,
-                    title: $(element).find("td.info a.title").text().replace(/\s/g, ""),
-                    artist: $(element).find("td.info a.artist").text().replace(/\s/g, ""),
+                    //정규표현식 "/"정규표현식 시작, "\s" 공백문자, "/"패턴 끝, "g" 패턴과 일치하는 모든 부분
+                    title: $(element).find("td div.wrap div.wrap_song_info div.rank01 span a").text().replace(/\s/g, ""),
+                    artist: $(element).find("td div.wrap div.wrap_song_info div.rank02 span a").text().replace(/\s/g, ""),
                 };
             });
 
